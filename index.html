@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Document</title>
+</head>
+
+<body class="bg-slate-300">
+    <div id="container">
+        <div class="relative mb-5 bg-green-800 h-[500px] w-[800px] mx-auto mt-10 rounded-2xl p-2 text-center">
+            <select id="category" class="w-96 rounded-md text-xl text-blue-600 p-2 m-4">
+                <option value="any">Any Category</option>
+                <option value="9">General Knowledge</option>
+                <option value="10">Entertainment: Books</option>
+                <option value="11">Entertainment: Film</option>
+                <option value="12">Entertainment: Music</option>
+                <option value="13">Entertainment: Musicals &amp; Theatres</option>
+                <option value="14">Entertainment: Television</option>
+                <option value="15">Entertainment: Video Games</option>
+                <option value="16">Entertainment: Board Games</option>
+                <option value="17">Science &amp; Nature</option>
+                <option value="18">Science: Computers</option>
+                <option value="19">Science: Mathematics</option>
+                <option value="20">Mythology</option>
+                <option value="21">Sports</option>
+                <option value="22">Geography</option>
+                <option value="23">History</option>
+                <option value="24">Politics</option>
+                <option value="25">Art</option>
+                <option value="26">Celebrities</option>
+                <option value="27">Animals</option>
+                <option value="28">Vehicles</option>
+                <option value="29">Entertainment: Comics</option>
+                <option value="30">Science: Gadgets</option>
+                <option value="31">Entertainment: Japanese Anime &amp; Manga</option>
+                <option value="32">Entertainment: Cartoon &amp; Animations</option>
+            </select>
+            <br>
+            <select id="difficulty" class="w-96 rounded-md text-xl text-blue-600 p-2 m-4">
+                <option value="any">Any Difficulty</option>
+                <option value="easy">Easy</option>
+                <option value="medium">Medium</option>
+                <option value="hard">Hard</option>
+            </select>
+            <br>
+            <select id="amount" class="w-96 rounded-md text-xl text-blue-600 p-2 m-4">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10 </option>
+            </select>
+            <br>
+            <button class="m-2 mt-22 w-80 h-16 rounded-xl bg-blue-800 text-xl text-white font-semibold" onclick="myFunc()">Start Quiz</button>
+        </div>
+    </div>
+    <script>
+        const container = document.getElementById('container')
+        let realAnswers = []
+        let userAnswers = []
+        const myFunc = async () => {
+            const category = document.getElementById('category').value
+            const difficulty = document.getElementById('difficulty').value
+            const amount = document.getElementById('amount').value
+            console.log(`https://opentdb.com/api.php?amount=10&category=${category}&difficulty=${difficulty}&type=multiple`)
+            console.log(`https://opentdb.com/api.php?amount=10&category=19&difficulty=medium&type=multiple`)
+            const res = await fetch(`https://opentdb.com/api.php?amount=10&category=${category}&difficulty=${difficulty}&type=multiple`)
+            const data = await res.json()
+            console.log(data)
+            const results = data.results
+            console.log('results = ' + results)
+            container.innerText = ''
+            for (let i = 0; i < amount; i++) {
+                let result = results[i]
+                let answers = []
+                answers.push(result.correct_answer, result.incorrect_answers[1], result.incorrect_answers[0], result.incorrect_answers[2])
+
+                let num1 = Math.floor(Math.random() * answers.length)
+                let A = answers[num1]
+                answers.splice(num1, 1)
+
+                let num2 = Math.floor(Math.random() * answers.length)
+                let B = answers[num2]
+                answers.splice(num2, 1)
+
+                let num3 = Math.floor(Math.random() * answers.length)
+                let C = answers[num3]
+                answers.splice(num3, 1)
+
+                let D = answers[0]
+                answers.push(result.correct_answer, result.incorrect_answers[1], result.incorrect_answers[0], result.incorrect_answers[2])
+                let val = ''
+                if (i == (amount - 1)) {
+                    container.innerHTML +=
+                        `<div class="relative mb-5 bg-green-700 h-[500px] w-[800px] mx-auto mt-10 rounded-2xl p-2">
+                <h1 class="text-center text-3xl font-bold text-blue-400">Q${i + 1}. ${result.question}</h1>
+                <div class="grid grid-cols-2 mx-auto w-fit mt-10">
+                    <button class="m-2 w-80 h-16 rounded-xl bg-blue-800 text-xl text-white font-semibold" value="${A}" onclick="userAnswers.push(this.value); this.classList.remove('bg-blue-800'); this.classList.add('bg-slate-600')">A. ${A}</button>
+                    <button class="m-2 w-80 h-16 rounded-xl bg-blue-800 text-xl text-white font-semibold" value="${B}" onclick="userAnswers.push(this.value); this.classList.remove('bg-blue-800'); this.classList.add('bg-slate-600')">B. ${B}</button>
+                    <button class="m-2 w-80 h-16 rounded-xl bg-blue-800 text-xl text-white font-semibold" value="${C}" onclick="userAnswers.push(this.value); this.classList.remove('bg-blue-800'); this.classList.add('bg-slate-600')">C. ${C}</button>
+                    <button class="m-2 w-80 h-16 rounded-xl bg-blue-800 text-xl text-white font-semibold" value="${D}" onclick="userAnswers.push(this.value); this.classList.remove('bg-blue-800'); this.classList.add('bg-slate-600')">D. ${D}</button>
+                </div>
+                <button class="absolute right-[10px] bottom-[10px] w-44 h-12 rounded-2xl text-green-800 text-xl bg-white font-semibold mx-auto" onclick="checkAnswers()">Submit →</button>
+            </div>`
+                }
+                else {
+                    container.innerHTML +=
+                        `<div class="mb-5 bg-green-700 h-[500px] w-[800px] mx-auto mt-10 rounded-2xl p-2">
+                <h1 class="text-center text-3xl font-bold text-blue-400">Q${i + 1}. ${result.question}</h1>
+                <div class="grid grid-cols-2 mx-auto w-fit mt-10">
+                    <button class="m-2 w-80 h-16 rounded-xl bg-blue-800 text-xl text-white font-semibold" value="${A}" onclick="userAnswers.push(this.value); this.classList.remove('bg-blue-800'); this.classList.add('bg-slate-600')">A. ${A}</button>
+                    <button class="m-2 w-80 h-16 rounded-xl bg-blue-800 text-xl text-white font-semibold" value="${B}" onclick="userAnswers.push(this.value); this.classList.remove('bg-blue-800'); this.classList.add('bg-slate-600')">B. ${B}</button>
+                    <button class="m-2 w-80 h-16 rounded-xl bg-blue-800 text-xl text-white font-semibold" value="${C}" onclick="userAnswers.push(this.value); this.classList.remove('bg-blue-800'); this.classList.add('bg-slate-600')">C. ${C}</button>
+                    <button class="m-2 w-80 h-16 rounded-xl bg-blue-800 text-xl text-white font-semibold" value="${D}" onclick="userAnswers.push(this.value); this.classList.remove('bg-blue-800'); this.classList.add('bg-slate-600')">D. ${D}</button>
+                </div>
+            </div>`
+                }
+                realAnswers.push(result.correct_answer)
+            }
+            console.log(userAnswers)
+        }
+        const checkAnswers = () => {
+            let points = 0
+            for (let i = 0; i < realAnswers.length; i++) {
+                if (realAnswers[i] === userAnswers[i]) {
+                    points++
+                }
+                console.log('Points = ' + points)
+            }
+            let percent = (points / (realAnswers.length)) * 100
+            container.innerHTML =
+        `<div class="relative mb-5 bg-green-800 h-[500px] w-[800px] mx-auto mt-10 rounded-2xl p-2 text-center">
+            <p class="text-white font-bold text-7xl">Congratulations</p>
+            <p class="text-white text-bold text-4xl mt-10">You got ${percent}% answers correct and ${points}/${realAnswers.length} marks</p>
+            <button class="m-2 mt-56 w-80 h-16 rounded-xl bg-blue-800 text-xl text-white font-semibold">Start Again ↻</button>
+        </div>`
+        console.log(realAnswers)
+        }
+    </script>
+</body>
+
+</html>
